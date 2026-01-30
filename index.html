@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorldQnA</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    height:100vh;
+    background:
+        radial-gradient(900px 500px at top, #e8f4ff, transparent 60%),
+        radial-gradient(700px 400px at bottom, #cfe9ff, transparent 60%),
+        linear-gradient(180deg, #f7fbff, #eaf3ff);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    font-family:system-ui, sans-serif;
+    color:#0b2a3a;
+}
+
+/* floating grid lines (knowledge feel) */
+body::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(to right, rgba(0,0,0,.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,.03) 1px, transparent 1px);
+    background-size:60px 60px;
+}
+
+/* world sphere */
+.world{
+    position:absolute;
+    width:380px;
+    height:380px;
+    border-radius:50%;
+    background:
+        radial-gradient(circle at 30% 30%, #ffffff, transparent 55%),
+        radial-gradient(circle at center, #9bd6ff, #2a6f9e 70%);
+    box-shadow:
+        0 40px 80px rgba(0,80,120,.25),
+        inset -30px -30px 60px rgba(0,0,0,.25);
+    animation:float 8s ease-in-out infinite;
+}
+
+@keyframes float{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-18px); }
+}
+
+/* orbit */
+.orbit{
+    position:absolute;
+    width:520px;
+    height:520px;
+    border-radius:50%;
+    border:1px dashed rgba(0,80,120,.2);
+}
+
+/* glass timer */
+.timer{
+    position:relative;
+    z-index:2;
+    padding:22px 34px;
+    font-size:2.4rem;
+    font-weight:600;
+    letter-spacing:2px;
+    background:rgba(255,255,255,.55);
+    backdrop-filter: blur(14px);
+    border-radius:18px;
+    box-shadow:
+        0 25px 60px rgba(0,0,0,.15),
+        inset 0 0 20px rgba(255,255,255,.8);
+    color:#08304a;
+}
+</style>
+</head>
+
+<body>
+
+<div class="orbit"></div>
+<div class="world"></div>
+<div class="timer" id="timer">loading…</div>
+
+<script>
+/* 🔒 GLOBAL FIXED START TIME */
+const START_TIME = new Date("2026-01-01T00:00:00Z");
+
+function updateTimer(){
+    let diff = Math.floor((Date.now() - START_TIME) / 1000);
+    if(diff < 0) diff = 0;
+
+    const units = [
+        {l:"y", s:31536000},
+        {l:"mo",s:2592000},
+        {l:"d", s:86400},
+        {l:"h", s:3600},
+        {l:"m", s:60},
+        {l:"s", s:1}
+    ];
+
+    let out=[];
+    for(const u of units){
+        const v = Math.floor(diff/u.s);
+        if(v>0){
+            out.push(v+u.l);
+            diff%=u.s;
+        }
+    }
+    timer.textContent = out.length ? out.join(" ") : "0s";
+}
+
+updateTimer();
+setInterval(updateTimer,1000);
+</script>
+
+</body>
+</html>
